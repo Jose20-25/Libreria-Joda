@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes - LIBRERÍA JODA{% endblock %}
+{% block page_title %}Reportes y Análisis{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Ventas del Mes</h3>
+        <div class="value">$25,480.00</div>
+        <small style="color: #10b981;">▲ 12.5% vs mes anterior</small>
+    </div>
+    <div class="stat-card">
+        <h3>Productos Más Vendidos</h3>
+        <div class="value">156</div>
+        <small>Cuadernos y Libretas</small>
+    </div>
+    <div class="stat-card">
+        <h3>Margen de Ganancia</h3>
+        <div class="value">34.5%</div>
+        <small style="color: #10b981;">▲ 2.1%</small>
+    </div>
+    <div class="stat-card">
+        <h3>Stock Bajo</h3>
+        <div class="value">8</div>
+        <small style="color: #ef4444;">Requieren reposición</small>
+    </div>
+</div>
+
+<!-- Filtros de Fecha -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Filtros de Reporte</h2>
+    </div>
+    
+    <form id="reportFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding: 1.5rem;">
+        <div class="form-group">
+            <label class="form-label">Fecha Inicio</label>
+            <input type="date" id="startDate" class="form-control" value="{{ start_date }}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Fecha Fin</label>
+            <input type="date" id="endDate" class="form-control" value="{{ end_date }}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Tipo de Reporte</label>
+            <select id="reportType" class="form-control">
+                <option value="sales">Ventas</option>
+                <option value="inventory">Inventario</option>
+                <option value="customers">Clientes</option>
+                <option value="products">Productos</option>
+            </select>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+            <button type="button" class="btn btn-primary" onclick="loadReport()">
+                <i class="fas fa-search"></i> Generar
+            </button>
+            <button type="button" class="btn btn-success" onclick="exportExcel()">
+                <i class="fas fa-file-excel"></i> Excel Inventario Pro
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Gráficas -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Ventas por Categoría</h3>
+        </div>
+        <div style="padding: 1rem; height: 350px;">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Tendencia de Ventas</h3>
+        </div>
+        <div style="padding: 1rem; height: 350px;">
+            <canvas id="trendsChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Datos -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Detalle de Ventas</h2>
+    </div>
+    
+    <table id="reportTable">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Folio</th>
+                <th>Cliente</th>
+                <th>Productos</th>
+                <th>Subtotal</th>
+                <th>IVA</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if sales %}
+                {% for sale in sales %}
+                <tr>
+                    <td>{{ sale.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td><strong>{{ sale.sale_number }}</strong></td>
+                    <td>{{ sale.customer.name if sale.customer else 'Cliente General' }}</td>
+                    <td>{{ sale.items|length }} productos</td>
+                    <td>${{ '%.2f'|format(sale.subtotal) }}</td>
+                    <td>${{ '%.2f'|format(sale.tax) }}</td>
+                    <td><strong>${{ '%.2f'|format(sale.total) }}</strong></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                        <p>No hay ventas en el período seleccionado</p>
+                        <small>Intenta ajustar las fechas de filtro</small>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Top Productos -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Top 10 Productos Más Vendidos</h2>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Cantidad Vendida</th>
+                <th>Ingresos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in top_products[:10] %}
+            <tr>
+                <td><strong>#{{ loop.index }}</strong></td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas {{ product.icon }}" style="color: var(--primary-color);"></i>
+                        {{ product.name }}
+                    </div>
+                </td>
+                <td><span class="badge">{{ product.category }}</span></td>
+                <td>{{ product.total_sold or 0 }}</td>
+                <td>${{ '%.2f'|format((product.total_sold or 0) * product.sell_price) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Productos con Stock Bajo -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Productos con Stock Bajo</h2>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Stock Actual</th>
+                <th>Stock Mínimo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in low_stock %}
+            <tr>
+                <td><code>{{ product.code }}</code></td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.stock }}</td>
+                <td>{{ product.min_stock }}</td>
+                <td>
+                    {% if product.stock == 0 %}
+                        <span class="badge badge-danger">Agotado</span>
+                    {% else %}
+                        <span class="badge badge-warning">Stock Bajo</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Datos para gráficas
+    const categorySalesData = {{ category_sales|tojson }};
+    const monthlyTrendsData = {{ monthly_trends|tojson }};
+    
+    // Gráfica de Categorías
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: categorySalesData.map(c => c.category),
+            datasets: [{
+                data: categorySalesData.map(c => c.total),
+                backgroundColor: [
+                    '#667eea', '#764ba2', '#f093fb', '#4facfe',
+                    '#43e97b', '#fa709a', '#fee140', '#30cfd0'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Gráfica de Tendencias
+    const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+    new Chart(trendsCtx, {
+        type: 'line',
+        data: {
+            labels: monthlyTrendsData.map(m => m.month),
+            datasets: [{
+                label: 'Ventas ($)',
+                data: monthlyTrendsData.map(m => m.total),
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    function loadReport() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const reportType = document.getElementById('reportType').value;
+        
+        window.location.href = `/reports?start_date=${startDate}&end_date=${endDate}&type=${reportType}`;
+    }
+    
+    async function exportExcel() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        
+        showNotification('Generando reporte profesional de inventario...', 'info');
+        
+        try {
+            const response = await fetch(`/reports/api/reports/export/excel?start_date=${startDate}&end_date=${endDate}`);
+            
+            if (!response.ok) {
+                throw new Error('Error al generar el reporte');
+            }
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `inventario_profesional_joda_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showNotification('📊 Reporte profesional de inventario generado con éxito!', 'success');
+        } catch (error) {
+            showNotification('Error al generar el reporte: ' + error.message, 'error');
+        }
+    }
+</script>
+{% endblock %}

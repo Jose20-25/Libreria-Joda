@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema ERP Librería JODA - Gestión completa de inventario, ventas y facturación">
+    <title>Librería JODA - Sistema ERP</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 60px 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #667eea;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.3em;
+            margin-bottom: 40px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .feature h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .status {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .status h2 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-success {
+            background: #10b981;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        .credentials {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .credentials h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        .cred-item {
+            background: white;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .tech-stack {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .tech {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; }
+            .container { padding: 30px 20px; }
+            .buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Librería JODA</h1>
+        <div class="subtitle">Sistema ERP Completo</div>
+        
+        <div class="status">
+            <h2>✅ Sistema Desplegado en GitHub Pages</h2>
+            <p style="font-size: 18px; margin-top: 10px;">
+                Versión de demostración disponible
+            </p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📦 Inventario</h3>
+                <p>Control completo de productos, stock y categorías</p>
+            </div>
+            <div class="feature">
+                <h3>💰 Ventas</h3>
+                <p>Punto de venta con carrito y múltiples formas de pago</p>
+            </div>
+            <div class="feature">
+                <h3>🧾 Facturas</h3>
+                <p>Generación automática de facturas en PDF</p>
+            </div>
+            <div class="feature">
+                <h3>👥 Clientes</h3>
+                <p>Base de datos de clientes con historial</p>
+            </div>
+            <div class="feature">
+                <h3>📊 Reportes</h3>
+                <p>Reportes detallados de inventario y ventas</p>
+            </div>
+            <div class="feature">
+                <h3>📱 Responsive</h3>
+                <p>Funciona en PC, tablets y smartphones</p>
+            </div>
+        </div>
+        
+        <div class="credentials">
+            <h3>🔐 Credenciales de Acceso</h3>
+            <div class="cred-item">
+                <strong>Usuario:</strong> admin
+            </div>
+            <div class="cred-item">
+                <strong>Contraseña:</strong> admin123
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <a href="https://libreria-joda.web.app" class="btn btn-success" target="_blank">
+                🚀 Acceder al Sistema
+            </a>
+            <a href="https://github.com/jose20-25/Libreria-Joda" class="btn" target="_blank">
+                💻 Ver Código en GitHub
+            </a>
+            <a href="https://dashboard.render.com" class="btn" target="_blank">
+                ☁️ Panel Render
+            </a>
+        </div>
+        
+        <div class="info-box">
+            <h3 style="color: #1976d2; margin-bottom: 15px;">🛠️ Stack Tecnológico</h3>
+            <div class="tech-stack">
+                <span class="tech">Python 3.11</span>
+                <span class="tech">Flask 3.0</span>
+                <span class="tech">SQLAlchemy 2.0</span>
+                <span class="tech">Firebase Hosting</span>
+                <span class="tech">Render.com</span>
+                <span class="tech">PostgreSQL</span>
+                <span class="tech">ReportLab</span>
+            </div>
+        </div>
+        
+        <div style="background: #f9f9f9; padding: 25px; border-radius: 10px; margin-top: 30px;">
+            <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">📋 Próximos Pasos</h3>
+            <ol style="padding-left: 25px; line-height: 2;">
+                <li><strong>GitHub Pages:</strong> Ya desplegado en esta URL</li>
+                <li><strong>Firebase Hosting:</strong> Ejecuta <code>firebase deploy</code></li>
+                <li><strong>Backend en Render:</strong> Conecta tu repositorio en <a href="https://dashboard.render.com" target="_blank">Render.com</a></li>
+                <li><strong>Base de datos:</strong> Configura PostgreSQL en Render (gratis)</li>
+                <li><strong>Importar datos:</strong> Sube tu backup JSON desde Configuración</li>
+            </ol>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 10px;">
+            <p style="color: #666; margin-bottom: 10px;">
+                <strong>Repositorio:</strong> 
+                <a href="https://github.com/jose20-25/Libreria-Joda" target="_blank" style="color: #667eea;">
+                    jose20-25/Libreria-Joda
+                </a>
+            </p>
+            <p style="color: #666; font-size: 14px;">
+                Sistema 100% gratuito - Sin costos de hosting
+            </p>
+        </div>
+    </div>
+</body>
+</html>

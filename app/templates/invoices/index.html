@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+
+{% block title %}Facturación - LIBRERÍA JODA{% endblock %}
+{% block page_title %}Gestión de Facturas{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Facturas Este Mes</h3>
+        <div class="value">{{ invoices|selectattr('created_at')|list|length }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Total Facturado</h3>
+        <div class="value">${{ '%.2f'|format(invoices|sum(attribute='total')) }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Pagadas</h3>
+        <div class="value">{{ invoices|selectattr('status', 'equalto', 'paid')|list|length }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Pendientes</h3>
+        <div class="value">{{ invoices|selectattr('status', 'equalto', 'pending')|list|length }}</div>
+    </div>
+</div>
+
+<!-- Invoices Table -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Facturas Emitidas</h2>
+        <button class="btn btn-primary" onclick="openModal('invoiceModal')">
+            <i class="fas fa-file-invoice"></i> Nueva Factura
+        </button>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar facturas..." onkeyup="searchTable('searchInput', 'invoicesTable')">
+    </div>
+    
+    <table id="invoicesTable">
+        <thead>
+            <tr>
+                <th>Folio</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td><strong>{{ invoice.invoice_number }}</strong></td>
+                <td>{{ invoice.customer.name }}</td>
+                <td>{{ invoice.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>${{ '%.2f'|format(invoice.total) }}</td>
+                <td>
+                    {% if invoice.status == 'paid' %}
+                        <span class="badge badge-success">Pagada</span>
+                    {% elif invoice.status == 'pending' %}
+                        <span class="badge badge-warning">Pendiente</span>
+                    {% else %}
+                        <span class="badge badge-danger">Cancelada</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-sm" onclick="viewInvoice({{ invoice.id }})" title="Ver Detalle">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="downloadPDF({{ invoice.id }})" title="Descargar PDF Profesional">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                    {% if invoice.status == 'pending' %}
+                    <button class="btn btn-sm btn-primary" onclick="markAsPaid({{ invoice.id }})" title="Marcar como Pagada">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Nueva Factura -->
+<div id="invoiceModal" class="modal">
+    <div class="modal-content" style="max-width: 1000px;">
+        <div class="modal-header">
+            <h2 class="modal-title">Nueva Factura</h2>
+            <button class="close-modal" onclick="closeModal('invoiceModal')">&times;</button>
+        </div>
+        <form id="invoiceForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Cliente *</label>
+                    <select name="customer_id" id="customerId" class="form-control" required>
+                        <option value="">Seleccione un cliente</option>
+                        {% for customer in customers %}
+                        <option value="{{ customer.id }}">{{ customer.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Método de Pago</label>
+                    <select name="payment_method" id="paymentMethod" class="form-control">
+                        <option value="cash">Efectivo</option>
+                        <option value="card">Tarjeta</option>
+                        <option value="transfer">Transferencia</option>
+                    </select>
+                </div>
+            </div>
+            
+            <h3 style="margin-bottom: 1rem;">Productos</h3>
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <table id="invoiceItemsTable">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit.</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceItems">
+                    </tbody>
+                </table>
+                
+                <button type="button" class="btn" onclick="addInvoiceItem()" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-plus"></i> Agregar Producto
+                </button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 2rem; margin-bottom: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Notas</label>
+                    <textarea name="notes" id="invoiceNotes" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="min-width: 300px;">
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.25rem;">
+                            <span><strong>Total a Pagar:</strong></span>
+                            <strong id="totalValue" style="color: var(--primary-color);">$0.00</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-file-invoice"></i> Generar Factura
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Ver Factura -->
+<div id="viewInvoiceModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h2 class="modal-title">Detalle de Factura</h2>
+            <button class="close-modal" onclick="closeModal('viewInvoiceModal')">&times;</button>
+        </div>
+        <div id="invoiceDetail"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let itemCount = 0;
+    const products = {{ products|tojson }};
+    
+    function addInvoiceItem() {
+        itemCount++;
+        const row = `
+            <tr id="item-${itemCount}">
+                <td>
+                    <select name="items[${itemCount}][product_id]" class="form-control" required onchange="updatePrice(${itemCount})">
+                        <option value="">Seleccione producto</option>
+                        ${products.map(p => `<option value="${p.id}" data-price="${p.sell_price}">${p.name} - $${p.sell_price.toFixed(2)}</option>`).join('')}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="items[${itemCount}][quantity]" class="form-control" min="1" value="1" required onchange="calculateInvoiceTotal()">
+                </td>
+                <td>
+                    <input type="number" name="items[${itemCount}][unit_price]" class="form-control" step="0.01" required readonly>
+                </td>
+                <td>
+                    <strong class="line-total">$0.00</strong>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeItem(${itemCount})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        document.getElementById('invoiceItems').insertAdjacentHTML('beforeend', row);
+    }
+    
+    function updatePrice(itemId) {
+        const row = document.getElementById(`item-${itemId}`);
+        const select = row.querySelector('select');
+        const priceInput = row.querySelector('input[name*="unit_price"]');
+        const selectedOption = select.options[select.selectedIndex];
+        
+        if (selectedOption.dataset.price) {
+            priceInput.value = parseFloat(selectedOption.dataset.price).toFixed(2);
+            calculateInvoiceTotal();
+        }
+    }
+    
+    function removeItem(itemId) {
+        document.getElementById(`item-${itemId}`).remove();
+        calculateInvoiceTotal();
+    }
+    
+    function calculateInvoiceTotal() {
+        let total = 0;
+        
+        document.querySelectorAll('#invoiceItems tr').forEach(row => {
+            const quantity = parseFloat(row.querySelector('input[name*="quantity"]').value) || 0;
+            const price = parseFloat(row.querySelector('input[name*="unit_price"]').value) || 0;
+            const lineTotal = quantity * price;
+            
+            row.querySelector('.line-total').textContent = formatCurrency(lineTotal);
+            total += lineTotal;
+        });
+        
+        // Sin IVA - solo total de venta
+        document.getElementById('totalValue').textContent = formatCurrency(total);
+    }
+    
+    document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        // Construir objeto de datos
+        const data = {
+            customer_id: parseInt(formData.get('customer_id')),
+            payment_method: formData.get('payment_method'),
+            notes: formData.get('notes'),
+            items: []
+        };
+        
+        // Recopilar items
+        document.querySelectorAll('#invoiceItems tr').forEach(row => {
+            const productId = row.querySelector('select').value;
+            const quantity = row.querySelector('input[name*="quantity"]').value;
+            const unitPrice = row.querySelector('input[name*="unit_price"]').value;
+            
+            if (productId && quantity && unitPrice) {
+                data.items.push({
+                    product_id: parseInt(productId),
+                    quantity: parseInt(quantity),
+                    unit_price: parseFloat(unitPrice)
+                });
+            }
+        });
+        
+        if (data.items.length === 0) {
+            showNotification('Agregue al menos un producto', 'error');
+            return;
+        }
+        
+        const result = await apiRequest('/invoices/api/invoices', 'POST', data);
+        
+        if (result.success) {
+            showNotification('Factura creada exitosamente', 'success');
+            closeModal('invoiceModal');
+            location.reload();
+        }
+    });
+    
+    async function viewInvoice(id) {
+        const result = await apiRequest(`/invoices/api/invoices/${id}`);
+        
+        let itemsHTML = result.items.map(item => `
+            <tr>
+                <td>${item.product_name}</td>
+                <td>${item.quantity}</td>
+                <td>$${item.unit_price.toFixed(2)}</td>
+                <td>$${item.line_total.toFixed(2)}</td>
+            </tr>
+        `).join('');
+        
+        document.getElementById('invoiceDetail').innerHTML = `
+            <div style="padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <p><strong>Folio:</strong> ${result.invoice_number}</p>
+                        <p><strong>Cliente:</strong> ${result.customer_name}</p>
+                        <p><strong>Fecha:</strong> ${new Date(result.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div>
+                        <p><strong>Estado:</strong> <span class="badge badge-${result.status === 'paid' ? 'success' : 'warning'}">${result.status === 'paid' ? 'Pagada' : 'Pendiente'}</span></p>
+                        <p><strong>Método:</strong> ${result.payment_method}</p>
+                    </div>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHTML}
+                    </tbody>
+                </table>
+                
+                <div style="text-align: right; margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <h3><strong>Total a Pagar:</strong> $${result.total.toFixed(2)}</h3>
+                </div>
+            </div>
+        `;
+        
+        openModal('viewInvoiceModal');
+    }
+    
+    async function markAsPaid(id) {
+        if (!confirm('¿Marcar esta factura como pagada?')) return;
+        
+        const result = await apiRequest(`/invoices/api/invoices/${id}/pay`, 'POST');
+        
+        if (result.success) {
+            showNotification('Factura marcada como pagada', 'success');
+            location.reload();
+        }
+    }
+    
+    async function downloadPDF(id) {
+        showNotification('Generando PDF profesional...', 'info');
+        
+        try {
+            // Usar fetch para mejor manejo de errores
+            const response = await fetch(`/invoices/api/invoices/${id}/pdf`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            
+            // Verificar que es realmente un PDF
+            const contentType = response.headers.get('Content-Type');
+            if (!contentType || !contentType.includes('application/pdf')) {
+                throw new Error(`Tipo de contenido inesperado: ${contentType}`);
+            }
+            
+            // Obtener el blob del PDF
+            const blob = await response.blob();
+            
+            // Verificar que el blob no esté vacío
+            if (blob.size === 0) {
+                throw new Error('El archivo PDF está vacío');
+            }
+            
+            // Obtener el nombre del archivo del header
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let fileName = `factura_${id}.pdf`;
+            
+            if (contentDisposition) {
+                const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (fileNameMatch) {
+                    fileName = fileNameMatch[1];
+                }
+            }
+            
+            // Crear URL temporal y descargar
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Limpiar URL temporal
+            window.URL.revokeObjectURL(url);
+            
+            showNotification(`PDF descargado exitosamente (${(blob.size / 1024).toFixed(1)} KB)`, 'success');
+            
+        } catch (error) {
+            console.error('Error al descargar PDF:', error);
+            showNotification(`Error al descargar PDF: ${error.message}`, 'error');
+        }
+    }
+    
+    // Agregar primer item al abrir modal
+    document.querySelector('[onclick*="invoiceModal"]').addEventListener('click', () => {
+        document.getElementById('invoiceForm').reset();
+        document.getElementById('invoiceItems').innerHTML = '';
+        itemCount = 0;
+        addInvoiceItem();
+        calculateInvoiceTotal();
+    });
+</script>
+{% endblock %}

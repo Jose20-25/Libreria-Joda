@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes - LIBRERÍA JODA{% endblock %}
+{% block page_title %}Gestión de Clientes{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total Clientes</h3>
+        <div class="value">{{ customers|length }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Clientes VIP</h3>
+        <div class="value">{{ customers|selectattr('customer_type', 'equalto', 'vip')|list|length }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Nuevos Este Mes</h3>
+        <div class="value">3</div>
+    </div>
+    <div class="stat-card">
+        <h3>Ticket Promedio</h3>
+        <div class="value">$1,250</div>
+    </div>
+</div>
+
+<!-- Customers Table -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Lista de Clientes</h2>
+        <button class="btn btn-primary" onclick="openModal('customerModal')">
+            <i class="fas fa-plus"></i> Nuevo Cliente
+        </button>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar clientes..." onkeyup="searchTable('searchInput', 'customersTable')">
+    </div>
+    
+    <table id="customersTable">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>RFC</th>
+                <th>Tipo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                            {{ customer.name[:2].upper() }}
+                        </div>
+                        <strong>{{ customer.name }}</strong>
+                    </div>
+                </td>
+                <td>{{ customer.phone or 'N/A' }}</td>
+                <td>{{ customer.email or 'N/A' }}</td>
+                <td>{{ customer.rfc or 'N/A' }}</td>
+                <td>
+                    {% if customer.customer_type == 'vip' %}
+                        <span class="badge badge-warning">VIP</span>
+                    {% else %}
+                        <span class="badge badge-success">Regular</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-sm" onclick="editCustomer({{ customer.id }})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCustomer({{ customer.id }})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Cliente -->
+<div id="customerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Agregar Cliente</h2>
+            <button class="close-modal" onclick="closeModal('customerModal')">&times;</button>
+        </div>
+        <form id="customerForm">
+            <input type="hidden" id="customerId" name="id">
+            
+            <div class="form-group">
+                <label class="form-label">Nombre Completo *</label>
+                <input type="text" name="name" id="customerName" class="form-control" required>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Teléfono</label>
+                    <input type="tel" name="phone" id="customerPhone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" id="customerEmail" class="form-control">
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">RFC</label>
+                    <input type="text" name="rfc" id="customerRfc" class="form-control" maxlength="13">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo de Cliente</label>
+                    <select name="customer_type" id="customerType" class="form-control">
+                        <option value="regular">Regular</option>
+                        <option value="vip">VIP</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Dirección</label>
+                <input type="text" name="address" id="customerAddress" class="form-control">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Ciudad</label>
+                    <input type="text" name="city" id="customerCity" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Estado</label>
+                    <input type="text" name="state" id="customerState" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Código Postal</label>
+                    <input type="text" name="zip_code" id="customerZip" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notas</label>
+                <textarea name="notes" id="customerNotes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-save"></i> Guardar Cliente
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let editingCustomerId = null;
+    
+    document.getElementById('customerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        const url = editingCustomerId 
+            ? `/customers/api/customers/${editingCustomerId}`
+            : '/customers/api/customers';
+        const method = editingCustomerId ? 'PUT' : 'POST';
+        
+        const result = await apiRequest(url, method, data);
+        
+        if (result.success) {
+            showNotification(editingCustomerId ? 'Cliente actualizado' : 'Cliente creado', 'success');
+            closeModal('customerModal');
+            location.reload();
+        }
+    });
+    
+    async function editCustomer(id) {
+        editingCustomerId = id;
+        const result = await apiRequest(`/customers/api/customers/${id}`);
+        
+        document.getElementById('modalTitle').textContent = 'Editar Cliente';
+        document.getElementById('customerName').value = result.name;
+        document.getElementById('customerPhone').value = result.phone || '';
+        document.getElementById('customerEmail').value = result.email || '';
+        document.getElementById('customerRfc').value = result.rfc || '';
+        document.getElementById('customerType').value = result.customer_type;
+        document.getElementById('customerAddress').value = result.address || '';
+        document.getElementById('customerCity').value = result.city || '';
+        document.getElementById('customerState').value = result.state || '';
+        document.getElementById('customerZip').value = result.zip_code || '';
+        document.getElementById('customerNotes').value = result.notes || '';
+        
+        openModal('customerModal');
+    }
+    
+    async function deleteCustomer(id) {
+        if (!confirmDelete('¿Estás seguro de eliminar este cliente?')) return;
+        
+        const result = await apiRequest(`/customers/api/customers/${id}`, 'DELETE');
+        
+        if (result.success) {
+            showNotification('Cliente eliminado', 'success');
+            location.reload();
+        }
+    }
+    
+    // Reset form cuando se cierra el modal
+    document.querySelector('[onclick*="customerModal"]').addEventListener('click', () => {
+        editingCustomerId = null;
+        document.getElementById('customerForm').reset();
+        document.getElementById('modalTitle').textContent = 'Agregar Cliente';
+    });
+</script>
+{% endblock %}

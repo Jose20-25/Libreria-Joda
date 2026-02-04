@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Despliegue Gratuito - Librería JODA</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .success-box {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .step {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .btn-success {
+            background: #10b981;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        .btn-large {
+            font-size: 20px;
+            padding: 20px 50px;
+        }
+        pre {
+            background: #263238;
+            color: #4fc3f7;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        ul, ol {
+            padding-left: 30px;
+        }
+        li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+        }
+        .comparison-table tr:hover {
+            background: #f9f9f9;
+        }
+        .check {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .cross {
+            color: #ef4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Despliegue Gratuito Completado</h1>
+        <div class="subtitle">Librería JODA - Firebase Hosting + Render.com</div>
+        
+        <div class="success-box">
+            <h3 style="margin-top: 0;">✅ Firebase Hosting Desplegado</h3>
+            <p style="font-size: 18px; margin: 10px 0;">
+                <strong>URL Frontend:</strong> 
+                <a href="https://libreria-joda.web.app" target="_blank" style="color: #667eea;">
+                    https://libreria-joda.web.app
+                </a>
+            </p>
+            <p style="margin: 10px 0;">
+                Los archivos estáticos están en línea. Ahora necesitas desplegar el backend en Render.com.
+            </p>
+        </div>
+        
+        <div class="info-box">
+            <h3 style="margin-top: 0;">💰 Costo Total: $0 USD/mes</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>Servicio</th>
+                    <th>Plan</th>
+                    <th>Límites</th>
+                </tr>
+                <tr>
+                    <td><strong>Firebase Hosting</strong></td>
+                    <td class="check">✓ Gratis</td>
+                    <td>10 GB/mes, 360 MB/día</td>
+                </tr>
+                <tr>
+                    <td><strong>Render.com Web Service</strong></td>
+                    <td class="check">✓ Gratis</td>
+                    <td>750 horas/mes, 512 MB RAM</td>
+                </tr>
+                <tr>
+                    <td><strong>Render.com PostgreSQL</strong></td>
+                    <td class="check">✓ Gratis</td>
+                    <td>1 GB almacenamiento</td>
+                </tr>
+            </table>
+        </div>
+        
+        <h2 style="color: #667eea; margin-top: 40px;">📋 Próximos Pasos</h2>
+        
+        <div class="step">
+            <div style="display: flex; align-items: center;">
+                <span class="step-number">1</span>
+                <h3 style="margin: 0;">Crear Repositorio en GitHub</h3>
+            </div>
+            <p style="margin: 15px 0 15px 50px;">
+                Sube tu código a GitHub para que Render pueda acceder a él:
+            </p>
+            <pre style="margin-left: 50px;">git init
+git add .
+git commit -m "Initial commit - Librería JODA"
+git branch -M main
+git remote add origin https://github.com/TU_USUARIO/libreria-joda.git
+git push -u origin main</pre>
+            <p style="margin-left: 50px;">
+                <a href="https://github.com/new" target="_blank" class="btn">
+                    📦 Crear Repositorio en GitHub
+                </a>
+            </p>
+        </div>
+        
+        <div class="step">
+            <div style="display: flex; align-items: center;">
+                <span class="step-number">2</span>
+                <h3 style="margin: 0;">Crear Cuenta en Render.com</h3>
+            </div>
+            <p style="margin: 15px 0 15px 50px;">
+                <strong>100% Gratuito - Sin tarjeta de crédito requerida</strong>
+            </p>
+            <ul style="margin-left: 50px;">
+                <li>Ve a Render.com y regístrate con GitHub</li>
+                <li>Autoriza el acceso a tus repositorios</li>
+                <li>No necesitas ingresar información de pago</li>
+            </ul>
+            <p style="margin-left: 50px;">
+                <a href="https://dashboard.render.com/register" target="_blank" class="btn btn-success">
+                    🎯 Crear Cuenta en Render
+                </a>
+            </p>
+        </div>
+        
+        <div class="step">
+            <div style="display: flex; align-items: center;">
+                <span class="step-number">3</span>
+                <h3 style="margin: 0;">Desplegar Backend en Render</h3>
+            </div>
+            <p style="margin: 15px 0 15px 50px;">
+                En el Dashboard de Render:
+            </p>
+            <ol style="margin-left: 70px;">
+                <li>Click en <strong>"New +"</strong> → <strong>"Web Service"</strong></li>
+                <li>Conecta tu repositorio <code>libreria-joda</code></li>
+                <li>Configuración:
+                    <ul>
+                        <li><strong>Name:</strong> libreria-joda</li>
+                        <li><strong>Environment:</strong> Python 3</li>
+                        <li><strong>Region:</strong> Oregon (más cercano)</li>
+                        <li><strong>Branch:</strong> main</li>
+                        <li><strong>Build Command:</strong> <code>pip install -r requirements.txt</code></li>
+                        <li><strong>Start Command:</strong> <code>gunicorn -w 1 -b 0.0.0.0:$PORT run:app</code></li>
+                        <li><strong>Plan:</strong> Free</li>
+                    </ul>
+                </li>
+                <li>Click <strong>"Create Web Service"</strong></li>
+            </ol>
+            <p style="margin-left: 50px;">
+                <a href="https://dashboard.render.com/create?type=web" target="_blank" class="btn btn-success">
+                    🚀 Crear Web Service
+                </a>
+            </p>
+        </div>
+        
+        <div class="step">
+            <div style="display: flex; align-items: center;">
+                <span class="step-number">4</span>
+                <h3 style="margin: 0;">Configurar Variables de Entorno</h3>
+            </div>
+            <p style="margin: 15px 0 15px 50px;">
+                En la página de tu Web Service → Pestaña <strong>"Environment"</strong>:
+            </p>
+            <table style="margin-left: 50px; border-collapse: collapse; width: calc(100% - 50px);">
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Variable</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Valor</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><code>FLASK_ENV</code></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">production</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><code>SECRET_KEY</code></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">(cualquier texto aleatorio largo)</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="step">
+            <div style="display: flex; align-items: center;">
+                <span class="step-number">5</span>
+                <h3 style="margin: 0;">Esperar Despliegue (5-10 minutos)</h3>
+            </div>
+            <p style="margin: 15px 0 15px 50px;">
+                Render construirá y desplegará tu aplicación automáticamente.
+                Verás los logs en tiempo real. Una vez completado, obtendrás una URL como:
+            </p>
+            <pre style="margin-left: 50px;">https://libreria-joda.onrender.com</pre>
+        </div>
+        
+        <div class="step">
+            <div style="display: flex; align-items: center;">
+                <span class="step-number">6</span>
+                <h3 style="margin: 0;">Conectar Firebase con Render</h3>
+            </div>
+            <p style="margin: 15px 0 15px 50px;">
+                Actualiza <code>firebase.json</code> con la URL de Render:
+            </p>
+            <pre style="margin-left: 50px;">{
+  "hosting": {
+    "public": "public",
+    "rewrites": [{
+      "source": "/**",
+      "destination": "https://libreria-joda.onrender.com"
+    }]
+  }
+}</pre>
+            <p style="margin: 15px 0 15px 50px;">
+                Luego vuelve a desplegar Firebase:
+            </p>
+            <pre style="margin-left: 50px;">firebase deploy --only hosting</pre>
+        </div>
+        
+        <div class="step">
+            <div style="display: flex; align-items: center;">
+                <span class="step-number">7</span>
+                <h3 style="margin: 0;">Importar Tus Datos</h3>
+            </div>
+            <p style="margin: 15px 0 15px 50px;">
+                Una vez que el sistema esté en línea:
+            </p>
+            <ol style="margin-left: 70px;">
+                <li>Accede a <a href="https://libreria-joda.web.app" target="_blank">https://libreria-joda.web.app</a></li>
+                <li>Inicia sesión con:
+                    <ul>
+                        <li><strong>Usuario:</strong> admin</li>
+                        <li><strong>Contraseña:</strong> admin123</li>
+                    </ul>
+                </li>
+                <li>Ve a <strong>Configuración → Importar Datos</strong></li>
+                <li>Sube el archivo <code>datos_backup_20260203_171155.json</code></li>
+            </ol>
+        </div>
+        
+        <div class="warning-box">
+            <h3 style="margin-top: 0;">⚡ Importante - Limitaciones del Plan Gratuito</h3>
+            <ul>
+                <li><strong>Sleep automático:</strong> El servicio en Render se duerme después de 15 minutos sin actividad. La primera carga puede tardar 30-60 segundos.</li>
+                <li><strong>Solución:</strong> Usa <a href="https://uptimerobot.com" target="_blank">UptimeRobot</a> (gratis) para hacer ping cada 5 minutos y mantenerlo activo.</li>
+                <li><strong>Base de datos SQLite:</strong> Se reinicia con cada despliegue. Mejor usa PostgreSQL gratuito de Render para persistencia.</li>
+            </ul>
+        </div>
+        
+        <div class="info-box">
+            <h3 style="margin-top: 0;">💡 Mejora: Base de Datos PostgreSQL Persistente</h3>
+            <p>Para evitar perder datos con cada despliegue:</p>
+            <ol>
+                <li>En Render Dashboard → <strong>"New +" → "PostgreSQL"</strong></li>
+                <li>Plan: <strong>Free</strong> (1 GB)</li>
+                <li>Copia la <strong>DATABASE_URL</strong></li>
+                <li>Agrégala como variable de entorno en tu Web Service</li>
+                <li>Actualiza <code>config/config.py</code> para usar PostgreSQL en producción</li>
+            </ol>
+        </div>
+        
+        <h2 style="color: #667eea; margin-top: 40px;">📚 Recursos Adicionales</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+            <a href="https://render.com/docs/deploy-flask" target="_blank" class="btn" style="text-align: center;">
+                📖 Guía Flask en Render
+            </a>
+            <a href="https://firebase.google.com/docs/hosting" target="_blank" class="btn" style="text-align: center;">
+                🔥 Docs Firebase Hosting
+            </a>
+            <a href="https://dashboard.render.com" target="_blank" class="btn" style="text-align: center;">
+                🎯 Dashboard Render
+            </a>
+            <a href="README_DESPLIEGUE.md" target="_blank" class="btn" style="text-align: center;">
+                📋 README Completo
+            </a>
+        </div>
+        
+        <div style="text-align: center; margin: 40px 0;">
+            <p style="font-size: 18px; color: #666; margin-bottom: 20px;">
+                ¿Listo para desplegar el backend?
+            </p>
+            <a href="https://dashboard.render.com/register" target="_blank" class="btn btn-success btn-large">
+                🚀 Comenzar con Render (Gratis)
+            </a>
+        </div>
+        
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 30px; text-align: center;">
+            <p style="color: #666; margin: 0;">
+                📧 <strong>Credenciales del Sistema</strong><br>
+                Usuario: <code>admin</code> | Contraseña: <code>admin123</code>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

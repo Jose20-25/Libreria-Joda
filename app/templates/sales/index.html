@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+
+{% block title %}Ventas - LIBRERÍA JODA{% endblock %}
+{% block page_title %}Punto de Venta{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+    <!-- Productos -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Productos Disponibles</h2>
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="searchProduct" class="form-control" placeholder="Buscar producto..." 
+                       style="width: 250px;" onkeyup="filterProducts()">
+                <select id="categoryFilter" class="form-control" style="width: 200px;" onchange="filterProducts()">
+                    <option value="">Todas las Categorías</option>
+                    <option value="Cuadernos">Cuadernos</option>
+                    <option value="Lápices">Lápices</option>
+                    <option value="Bolígrafos">Bolígrafos</option>
+                    <option value="Marcadores">Marcadores</option>
+                    <option value="Colores">Colores</option>
+                    <option value="Tijeras">Tijeras</option>
+                    <option value="Correctores">Correctores</option>
+                    <option value="Reglas">Reglas</option>
+                    <option value="Folders">Folders</option>
+                    <option value="Mochilas">Mochilas</option>
+                    <option value="Calculadoras">Calculadoras</option>
+                    <option value="Papel">Papel</option>
+                    <option value="Arte">Arte</option>
+                    <option value="Accesorios">Accesorios</option>
+                </select>
+            </div>
+        </div>
+        <div id="productsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+            {% for product in products %}
+            <div class="product-card" data-category="{{ product.category }}" data-name="{{ product.name|lower }}" 
+                 onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.sell_price }}, {{ product.stock }})">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <i class="fas {{ product.icon }}" style="color: var(--primary-color);"></i>
+                    <span class="badge" style="font-size: 0.7rem;">{{ product.category }}</span>
+                </div>
+                <h4>{{ product.name }}</h4>
+                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">${{ "{:,.2f}".format(product.sell_price) }}</p>
+                <p style="color: #6b7280; font-size: 0.875rem;">Stock: {{ product.stock }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Carrito -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Carrito de Compra</h2>
+        </div>
+        
+        <!-- Selección de Cliente -->
+        <div style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">
+            <label for="customerSelect" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+                <i class="fas fa-user"></i> Cliente:
+            </label>
+            <select id="customerSelect" class="form-control" style="margin-bottom: 1rem;">
+                <option value="">🏃 Público General (Venta Rápida)</option>
+                {% for customer in customers %}
+                <option value="{{ customer.id }}" data-name="{{ customer.name }}">
+                    {{ customer.name }}
+                    {% if customer.customer_type == 'vip' %}
+                        <span style="color: #f59e0b;">⭐ VIP</span>
+                    {% endif %}
+                </option>
+                {% endfor %}
+            </select>
+            
+            <label for="paymentMethod" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+                <i class="fas fa-credit-card"></i> Método de Pago:
+            </label>
+            <select id="paymentMethod" class="form-control">
+                <option value="cash">💵 Efectivo</option>
+                <option value="card">💳 Tarjeta</option>
+                <option value="transfer">🏦 Transferencia</option>
+            </select>
+        </div>
+        
+        <div id="cart"></div>
+        <div id="cartTotal" style="margin-top: 1rem; font-size: 1.25rem; font-weight: bold;"></div>
+        <button class="btn btn-success" style="width: 100%; margin-top: 1rem;" onclick="processSale()">
+            <i class="fas fa-check"></i> Procesar Venta
+        </button>
+    </div>
+</div>
+
+<!-- Historial de Ventas -->
+<div class="card" style="margin-top: 1.5rem;">
+    <div class="card-header">
+        <h2 class="card-title">Ventas Recientes</h2>
+        <div class="alert" style="background: #e8f5e8; color: #2d5a2d; padding: 0.5rem 1rem; border-radius: 6px; margin: 0;">
+            <i class="fas fa-info-circle"></i> <strong>Nuevo:</strong> Cada venta genera automáticamente una factura
+        </div>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Folio</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Método de Pago</th>
+                <th>Total</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if recent_sales %}
+                {% for sale in recent_sales %}
+                <tr>
+                    <td><strong>{{ sale.sale_number }}</strong></td>
+                    <td>{{ sale.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{{ sale.customer_name }}</td>
+                    <td>
+                        {% if sale.payment_method == 'cash' %}
+                            <span class="badge badge-success">Efectivo</span>
+                        {% elif sale.payment_method == 'card' %}
+                            <span class="badge badge-info">Tarjeta</span>
+                        {% else %}
+                            <span class="badge">Transferencia</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>${{ '%.2f'|format(sale.total) }}</strong></td>
+                    <td><span class="badge badge-success">Completada</span></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #6b7280;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                        <p>No hay ventas registradas</p>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let cart = [];
+    
+    function addToCart(id, name, price, stock) {
+        const existing = cart.find(item => item.id === id);
+        if (existing) {
+            if (existing.quantity < stock) {
+                existing.quantity++;
+            } else {
+                showNotification('Stock insuficiente', 'error');
+                return;
+            }
+        } else {
+            cart.push({ id, name, price, quantity: 1 });
+        }
+        renderCart();
+    }
+    
+    function renderCart() {
+        const cartDiv = document.getElementById('cart');
+        const totalDiv = document.getElementById('cartTotal');
+        
+        if (cart.length === 0) {
+            cartDiv.innerHTML = '<p>Carrito vacío</p>';
+            totalDiv.innerHTML = '';
+            return;
+        }
+        
+        let html = '';
+        let total = 0;
+        
+        cart.forEach((item, index) => {
+            const subtotal = item.price * item.quantity;
+            total += subtotal;
+            html += `
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb;">
+                    <div>
+                        <div>${item.name}</div>
+                        <div style="font-size: 0.875rem; color: #6b7280;">
+                            $${item.price.toFixed(2)} x ${item.quantity}
+                        </div>
+                    </div>
+                    <div>
+                        <strong>$${subtotal.toFixed(2)}</strong>
+                        <button onclick="removeFromCart(${index})" style="margin-left: 0.5rem; color: red;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        cartDiv.innerHTML = html;
+        // El IVA 13% está incluido en el precio
+        // Total con IVA ya incluido
+        const totalConIVA = total;
+        // Calcular subtotal (precio sin IVA): Total / 1.13
+        const subtotal = total / 1.13;
+        // IVA es la diferencia
+        const tax = totalConIVA - subtotal;
+        
+        totalDiv.innerHTML = `
+            Subtotal: $${subtotal.toFixed(2)}<br>
+            IVA (13%): $${tax.toFixed(2)}<br>
+            Total: $${totalConIVA.toFixed(2)}
+        `;
+    }
+    
+    function filterProducts() {
+        const searchTerm = document.getElementById('searchProduct').value.toLowerCase();
+        const selectedCategory = document.getElementById('categoryFilter').value;
+        const products = document.querySelectorAll('.product-card');
+        
+        products.forEach(product => {
+            const productName = product.getAttribute('data-name');
+            const productCategory = product.getAttribute('data-category');
+            
+            const matchesSearch = productName.includes(searchTerm);
+            const matchesCategory = !selectedCategory || productCategory === selectedCategory;
+            
+            if (matchesSearch && matchesCategory) {
+                product.style.display = 'block';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+    }
+    
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        renderCart();
+    }
+    
+    async function processSale() {
+        if (cart.length === 0) {
+            showNotification('El carrito está vacío', 'error');
+            return;
+        }
+        
+        // Obtener datos del cliente y método de pago
+        const customerSelect = document.getElementById('customerSelect');
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        
+        const customerId = customerSelect.value ? parseInt(customerSelect.value) : null;
+        const customerName = customerSelect.value ? 
+            customerSelect.options[customerSelect.selectedIndex].dataset.name : 
+            'Público General';
+        const paymentMethod = paymentMethodSelect.value;
+        
+        const data = {
+            customer_id: customerId,
+            customer_name: customerName,
+            payment_method: paymentMethod,
+            items: cart.map(item => ({
+                product_id: item.id,
+                quantity: item.quantity
+            }))
+        };
+        
+        showNotification('Procesando venta...', 'info');
+        
+        const result = await apiRequest('/sales/api/sales', 'POST', data);
+        
+        if (result.success) {
+            const invoice = result.invoice;
+            const sale = result.sale;
+            
+            showNotification(
+                `✅ Venta procesada exitosamente
+                📄 Factura: ${invoice.invoice_number}
+                💰 Total: $${invoice.total.toFixed(2)}`, 
+                'success'
+            );
+            
+            // Mostrar modal con detalles de la venta y factura
+            showSaleCompletedModal(sale, invoice);
+            
+            cart = [];
+            renderCart();
+        }
+    }
+    
+    function showSaleCompletedModal(sale, invoice) {
+        const modalContent = `
+            <div class="modal" id="saleCompletedModal" style="display: block;">
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h2>🎉 Venta Completada</h2>
+                        <span class="close" onclick="closeSaleModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">
+                                Total: $${sale.total.toFixed(2)}
+                            </h3>
+                            <p style="color: #6b7280;">Venta procesada exitosamente</p>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4>📄 Factura Generada Automáticamente</h4>
+                            <p><strong>Número:</strong> ${invoice.invoice_number}</p>
+                            <p><strong>Estado:</strong> <span class="badge badge-success">Pagada</span></p>
+                            <p><strong>Total:</strong> $${invoice.total.toFixed(2)}</p>
+                        </div>
+                        
+                        <div style="background: #e3f2fd; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4>💰 Detalles de la Venta</h4>
+                            <p><strong>Número:</strong> ${sale.sale_number}</p>
+                            <p><strong>Cliente:</strong> ${sale.customer_name}</p>
+                            <p><strong>Método de Pago:</strong> ${getPaymentMethodIcon(sale.payment_method)} ${getPaymentMethodName(sale.payment_method)}</p>
+                        </div>
+                        
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary" onclick="downloadInvoicePDF(${invoice.id})" style="flex: 1;">
+                                <i class="fas fa-file-pdf"></i> Descargar Factura
+                            </button>
+                            <button class="btn btn-secondary" onclick="viewInvoice(${invoice.id})" style="flex: 1;">
+                                <i class="fas fa-eye"></i> Ver Factura
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalContent);
+    }
+    
+    function closeSaleModal() {
+        const modal = document.getElementById('saleCompletedModal');
+        if (modal) {
+            modal.remove();
+            location.reload(); // Recargar para actualizar las ventas recientes
+        }
+    }
+    
+    function downloadInvoicePDF(invoiceId) {
+        window.open(`/invoices/api/invoices/${invoiceId}/pdf`, '_blank');
+        closeSaleModal();
+    }
+    
+    function viewInvoice(invoiceId) {
+        closeSaleModal();
+        window.open(`/invoices`, '_blank');
+    }
+    
+    function getPaymentMethodIcon(method) {
+        switch(method) {
+            case 'cash': return '💵';
+            case 'card': return '💳';
+            case 'transfer': return '🏦';
+            default: return '💰';
+        }
+    }
+    
+    function getPaymentMethodName(method) {
+        switch(method) {
+            case 'cash': return 'Efectivo';
+            case 'card': return 'Tarjeta';
+            case 'transfer': return 'Transferencia';
+            default: return method;
+        }
+    }
+</script>
+
+<style>
+    .product-card {
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .product-card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}

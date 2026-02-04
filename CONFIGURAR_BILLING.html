@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar Facturación - Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .steps {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .step {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .btn-success {
+            background: #10b981;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 10px 0;
+        }
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .price-table th, .price-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .price-table th {
+            background: #667eea;
+            color: white;
+        }
+        .free {
+            color: #10b981;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💳 Configurar Facturación de Google Cloud</h1>
+        
+        <div class="warning">
+            <h3 style="margin-top: 0;">⚠️ Cuenta de Facturación Requerida</h3>
+            <p>Para usar Cloud Run (backend en la nube), necesitas configurar una cuenta de facturación en Google Cloud.</p>
+            <p><strong>No te preocupes:</strong> Google Cloud ofrece $300 USD de crédito gratuito para nuevos usuarios.</p>
+        </div>
+        
+        <div class="info">
+            <h3 style="margin-top: 0;">💰 Costos Estimados</h3>
+            <table class="price-table">
+                <tr>
+                    <th>Servicio</th>
+                    <th>Costo Mensual</th>
+                    <th>Nivel Gratuito</th>
+                </tr>
+                <tr>
+                    <td>Firebase Hosting</td>
+                    <td class="free">$0</td>
+                    <td>10 GB / mes gratis</td>
+                </tr>
+                <tr>
+                    <td>Cloud Run</td>
+                    <td class="free">$0 - $2</td>
+                    <td>2M requests / mes gratis</td>
+                </tr>
+                <tr>
+                    <td>Cloud Build</td>
+                    <td class="free">$0</td>
+                    <td>120 builds / día gratis</td>
+                </tr>
+                <tr>
+                    <td><strong>Total (uso normal)</strong></td>
+                    <td class="free"><strong>$0 - $2 / mes</strong></td>
+                    <td>Incluido en nivel gratuito</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="steps">
+            <h3 style="margin-bottom: 20px;">📋 Pasos para Configurar Facturación</h3>
+            
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Ir a la Consola de Facturación</strong>
+                <p style="margin: 10px 0 10px 40px;">
+                    <a href="https://console.cloud.google.com/billing/linkedaccount?project=libreria-joda" 
+                       target="_blank" class="btn">
+                        Abrir Consola de Facturación
+                    </a>
+                </p>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Crear o Vincular Cuenta de Facturación</strong>
+                <ul style="margin-left: 40px;">
+                    <li>Click en "Crear cuenta de facturación"</li>
+                    <li>Ingresa datos de tarjeta (no se cobrará)</li>
+                    <li>Activa $300 USD de crédito gratuito (nuevos usuarios)</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Vincular al Proyecto</strong>
+                <ul style="margin-left: 40px;">
+                    <li>Selecciona "libreria-joda" en la lista de proyectos</li>
+                    <li>Asocia la cuenta de facturación</li>
+                    <li>Confirma</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Ejecutar Despliegue</strong>
+                <p style="margin: 10px 0 10px 40px;">
+                    Una vez configurada la facturación, ejecuta en PowerShell:
+                </p>
+                <pre style="background: #263238; color: #4fc3f7; padding: 15px; border-radius: 5px; margin-left: 40px; overflow-x: auto;">.\deploy.ps1</pre>
+            </div>
+        </div>
+        
+        <div class="success">
+            <h3 style="margin-top: 0;">✅ Alternativa: Solo Firebase Hosting (Sin Backend)</h3>
+            <p>Si prefieres no configurar facturación ahora, puedes:</p>
+            <ol>
+                <li>Desplegar solo el frontend en Firebase Hosting (100% gratis)</li>
+                <li>Mantener el backend corriendo localmente</li>
+                <li>Acceder desde tu red local en tablets/móviles</li>
+            </ol>
+            <p style="margin-top: 15px;">
+                <strong>URL Local desde otros dispositivos:</strong><br>
+                http://192.168.1.25:5001
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="https://console.cloud.google.com/billing/linkedaccount?project=libreria-joda" 
+               target="_blank" class="btn btn-success">
+                💳 Configurar Facturación Ahora
+            </a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
+            <h4 style="color: #667eea;">🛡️ Protección contra Cargos</h4>
+            <ul>
+                <li>✅ Google no cobra sin tu autorización</li>
+                <li>✅ Configura alertas de presupuesto</li>
+                <li>✅ $300 USD de crédito gratuito para nuevos usuarios</li>
+                <li>✅ Uso típico: $0-2 USD/mes (dentro del nivel gratuito)</li>
+                <li>✅ Puedes pausar/eliminar servicios en cualquier momento</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 10px; text-align: center;">
+            <strong>📞 ¿Necesitas ayuda?</strong><br>
+            <span style="font-size: 14px;">
+                Una vez configurada la facturación, vuelve y ejecuta: <code>.\deploy.ps1</code>
+            </span>
+        </div>
+    </div>
+</body>
+</html>

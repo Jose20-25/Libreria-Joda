@@ -1,0 +1,78 @@
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║     🏪  LIBRERÍA JODA - SISTEMA ERP                         ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+
+┌──────────────────────────────────────────────────────────────┐
+│  ⚡ INICIO RÁPIDO - 3 PASOS                                  │
+└──────────────────────────────────────────────────────────────┘
+
+  1️⃣  Haz doble clic en:  Iniciar_Sistema.bat
+  
+  2️⃣  Espera a que se abra el navegador automáticamente
+  
+  3️⃣  Inicia sesión con:
+      Usuario:    admin
+      Contraseña: admin123
+
+
+┌──────────────────────────────────────────────────────────────┐
+│  📋 MÓDULOS DEL SISTEMA                                      │
+└──────────────────────────────────────────────────────────────┘
+
+  📊  Dashboard       → Estadísticas generales
+  📦  Inventario      → 14 categorías de productos  
+  💰  Ventas          → Punto de venta con filtros
+  🛒  Compras         → Órdenes y recepción
+  👥  Clientes        → Gestión VIP/Regular
+  📄  Facturas        → PDF profesional con logo
+  📈  Reportes        → Gráficas y Excel
+  ⚙️   Configuración  → IVA 13%, datos empresa
+
+
+┌──────────────────────────────────────────────────────────────┐
+│  🔧 OTRAS FORMAS DE INICIAR                                  │
+└──────────────────────────────────────────────────────────────┘
+
+  Opción A: python launcher.py
+  
+  Opción B: python run.py
+           Luego abre: http://127.0.0.1:5001
+  
+  Opción C: python build_exe.py
+           Genera ejecutable en: dist/Libreria_JODA_ERP.exe
+
+
+┌──────────────────────────────────────────────────────────────┐
+│  ❓ SOLUCIÓN DE PROBLEMAS                                    │
+└──────────────────────────────────────────────────────────────┘
+
+  ❌ Puerto ocupado
+     → Cierra otras instancias del servidor
+     
+  ❌ Dependencias faltantes  
+     → Ejecuta: pip install -r requirements.txt
+     
+  ❌ Error de base de datos
+     → Elimina: instance/libreria.db
+     
+  ❌ No abre navegador
+     → Abre manual: http://127.0.0.1:5001
+
+
+┌──────────────────────────────────────────────────────────────┐
+│  ℹ️  INFORMACIÓN TÉCNICA                                     │
+└──────────────────────────────────────────────────────────────┘
+
+  Tecnología:  Python + Flask 3.0
+  Puerto:      5001
+  URL:         http://127.0.0.1:5001
+  Base Datos:  SQLite (instance/libreria.db)
+  IVA:         13% incluido en precios
+
+
+╔══════════════════════════════════════════════════════════════╗
+║  © 2025 Librería JODA - Sistema de Gestión Empresarial      ║
+╚══════════════════════════════════════════════════════════════╝

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Inventario - LIBRERÍA JODA{% endblock %}
+{% block page_title %}Gestión de Inventario{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Productos</h2>
+        <button class="btn btn-primary" onclick="openModal('productModal')">
+            <i class="fas fa-plus"></i> Nuevo Producto
+        </button>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar productos...">
+    </div>
+    
+    <table id="productsTable">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Precio Costo</th>
+                <th>Precio Venta</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="productsBody">
+            {% for product in products %}
+            <tr>
+                <td>{{ product.code }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.stock }}</td>
+                <td>${{ "{:,.2f}".format(product.cost_price) }}</td>
+                <td>${{ "{:,.2f}".format(product.sell_price) }}</td>
+                <td>
+                    {% if product.status == 'in_stock' %}
+                        <span class="badge badge-success">En Stock</span>
+                    {% elif product.status == 'low_stock' %}
+                        <span class="badge badge-warning">Stock Bajo</span>
+                    {% else %}
+                        <span class="badge badge-danger">Sin Stock</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-sm" onclick="editProduct({{ product.id }})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteProduct({{ product.id }})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Agregar Producto</h2>
+            <button class="close-modal" onclick="closeModal('productModal')">&times;</button>
+        </div>
+        <form id="productForm">
+            <div class="form-group">
+                <label class="form-label">Categoría</label>
+                <select name="category" class="form-control" required>
+                    {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nombre</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stock</label>
+                <input type="number" name="stock" class="form-control" value="0" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Precio Costo</label>
+                <input type="number" name="cost_price" step="0.01" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Precio Venta</label>
+                <input type="number" name="sell_price" step="0.01" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let editingProductId = null;
+    
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        const url = editingProductId 
+            ? `/inventory/api/products/${editingProductId}`
+            : '/inventory/api/products';
+        const method = editingProductId ? 'PUT' : 'POST';
+        
+        const result = await apiRequest(url, method, data);
+        
+        if (result.success) {
+            showNotification(editingProductId ? 'Producto actualizado exitosamente' : 'Producto creado exitosamente', 'success');
+            closeModal('productModal');
+            editingProductId = null;
+            location.reload();
+        }
+    });
+    
+    async function editProduct(id) {
+        editingProductId = id;
+        
+        // Obtener datos del producto
+        const result = await apiRequest(`/inventory/api/products/${id}`, 'GET');
+        
+        if (result.success) {
+            const product = result.data;
+            
+            // Actualizar el título del modal
+            document.querySelector('#productModal .modal-title').textContent = 'Editar Producto';
+            
+            // Llenar el formulario con los datos del producto
+            const form = document.getElementById('productForm');
+            form.querySelector('[name="category"]').value = product.category;
+            form.querySelector('[name="name"]').value = product.name;
+            form.querySelector('[name="stock"]').value = product.stock;
+            form.querySelector('[name="cost_price"]').value = product.cost_price;
+            form.querySelector('[name="sell_price"]').value = product.sell_price;
+            
+            // Abrir el modal
+            openModal('productModal');
+        }
+    }
+    
+    // Resetear el modal cuando se cierra
+    const originalCloseModal = window.closeModal;
+    window.closeModal = function(modalId) {
+        if (modalId === 'productModal') {
+            editingProductId = null;
+            document.querySelector('#productModal .modal-title').textContent = 'Agregar Producto';
+            document.getElementById('productForm').reset();
+        }
+        originalCloseModal(modalId);
+    };
+    
+    async function deleteProduct(id) {
+        if (!confirmDelete()) return;
+        
+        const result = await apiRequest(`/inventory/api/products/${id}`, 'DELETE');
+        
+        if (result.success) {
+            showNotification('Producto eliminado', 'success');
+            location.reload();
+        }
+    }
+    
+    searchTable('searchInput', 'productsTable');
+</script>
+{% endblock %}

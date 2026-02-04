@@ -1,0 +1,153 @@
+═══════════════════════════════════════════════════════════════
+  🏪 LIBRERÍA JODA - SISTEMA ERP
+  ARCHIVOS DE INICIO CREADOS
+═══════════════════════════════════════════════════════════════
+
+✅ ARCHIVOS CREADOS:
+
+1. 📄 Iniciar_Sistema.bat
+   → Archivo BAT para Windows
+   → Doble clic para iniciar
+   → Abre navegador automáticamente
+   
+2. 🐍 launcher.py  
+   → Launcher de Python
+   → Verifica puerto y abre navegador
+   → Ejecutar: python launcher.py
+
+3. 🔨 build_exe.py
+   → Genera ejecutable .exe
+   → Requiere PyInstaller
+   → Ejecutar: python build_exe.py
+   → Resultado: dist/Libreria_JODA_ERP.exe
+
+4. 📖 README.md
+   → Documentación completa actualizada
+   → Incluye inicio rápido
+   → Métodos de instalación
+
+5. 📝 COMO_USAR.md
+   → Guía de uso detallada
+   → Solución de problemas
+   → Características del sistema
+
+6. 📋 INSTRUCCIONES.txt
+   → Guía visual en texto plano
+   → Pasos numerados
+   → Información técnica
+
+
+═══════════════════════════════════════════════════════════════
+  🚀 FORMAS DE INICIAR EL SISTEMA
+═══════════════════════════════════════════════════════════════
+
+RECOMENDADO: Iniciar_Sistema.bat
+-------------------------------
+1. Haz doble clic en "Iniciar_Sistema.bat"
+2. Espera a que se abra el navegador
+3. Inicia sesión (admin / admin123)
+
+ALTERNATIVA 1: Launcher Python
+-------------------------------
+1. Abre terminal en la carpeta del proyecto
+2. Ejecuta: python launcher.py
+3. El navegador se abrirá automáticamente
+
+ALTERNATIVA 2: Crear Ejecutable
+-------------------------------
+1. Ejecuta: python build_exe.py
+2. Espera a que termine (instala PyInstaller)
+3. Copia dist/Libreria_JODA_ERP.exe al directorio raíz
+4. Haz doble clic en el .exe
+
+ALTERNATIVA 3: Modo Manual
+-------------------------------
+1. Ejecuta: python run.py
+2. Abre navegador en: http://127.0.0.1:5001
+3. Inicia sesión
+
+
+═══════════════════════════════════════════════════════════════
+  🔐 CREDENCIALES DE ACCESO
+═══════════════════════════════════════════════════════════════
+
+Usuario:    admin
+Contraseña: admin123
+
+
+═══════════════════════════════════════════════════════════════
+  📦 MÓDULOS IMPLEMENTADOS
+═══════════════════════════════════════════════════════════════
+
+✓ Dashboard         - Estadísticas y gráficas
+✓ Inventario        - 14 categorías de productos
+✓ Ventas            - POS con filtros y búsqueda
+✓ Compras           - Órdenes y recepción
+✓ Clientes          - Gestión VIP/Regular
+✓ Facturas          - PDF profesional con logo
+✓ Reportes          - Gráficas y exportación Excel
+✓ Configuración     - IVA 13%, datos empresa
+
+
+═══════════════════════════════════════════════════════════════
+  ✨ CARACTERÍSTICAS PRINCIPALES
+═══════════════════════════════════════════════════════════════
+
+• IVA 13% incluido en todos los precios
+• Organización por categorías (14 tipos de productos)
+• Filtrado y búsqueda en tiempo real
+• Generación de PDF con diseño profesional
+• Exportación de reportes a Excel
+• Gráficas interactivas con Chart.js
+• Gestión de stock automática
+• Historial de ventas y compras
+• Sistema de clientes VIP
+• Interfaz moderna y responsiva
+
+
+═══════════════════════════════════════════════════════════════
+  🛠️ REQUISITOS DEL SISTEMA
+═══════════════════════════════════════════════════════════════
+
+• Python 3.11 o superior
+• Dependencias: pip install -r requirements.txt
+• Navegador web moderno (Chrome, Firefox, Edge)
+• Windows, Linux o macOS
+
+
+═══════════════════════════════════════════════════════════════
+  ❓ SOLUCIÓN DE PROBLEMAS
+═══════════════════════════════════════════════════════════════
+
+Problema: Puerto 5001 ocupado
+Solución: Cierra otras instancias del servidor
+
+Problema: Dependencias faltantes
+Solución: pip install -r requirements.txt
+
+Problema: Error de base de datos
+Solución: Elimina instance/libreria.db y reinicia
+
+Problema: No abre navegador
+Solución: Abre manual http://127.0.0.1:5001
+
+
+═══════════════════════════════════════════════════════════════
+  📞 INFORMACIÓN TÉCNICA
+═══════════════════════════════════════════════════════════════
+
+Framework:     Flask 3.0.0
+Base de datos: SQLite
+Puerto:        5001
+Host:          http://127.0.0.1:5001
+Arquitectura:  MVC con Blueprints
+ORM:           SQLAlchemy 2.0
+Frontend:      HTML5, CSS3, JavaScript vanilla
+Gráficas:      Chart.js 3.x
+PDF:           ReportLab 4.0
+Excel:         OpenPyXL 3.1
+
+
+═══════════════════════════════════════════════════════════════
+  © 2025 LIBRERÍA JODA - Sistema de Gestión Empresarial
+═══════════════════════════════════════════════════════════════

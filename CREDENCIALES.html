@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credenciales de Acceso - Librería JODA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .credentials {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #1976d2;
+        }
+        .credential-item {
+            margin: 15px 0;
+            font-size: 18px;
+        }
+        .credential-label {
+            color: #666;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .credential-value {
+            background: white;
+            padding: 12px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            color: #1976d2;
+            border: 2px solid #1976d2;
+            display: inline-block;
+            min-width: 200px;
+        }
+        .copy-btn {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        .copy-btn:hover {
+            background: #1565c0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .warning-title {
+            color: #856404;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .url-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .url {
+            font-size: 20px;
+            color: #1976d2;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        .btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔐 Credenciales de Acceso</h1>
+        <p class="subtitle">Sistema ERP - Librería JODA</p>
+        
+        <div class="credentials">
+            <div class="credential-item">
+                <span class="credential-label">Usuario:</span>
+                <span class="credential-value" id="username">admin</span>
+                <button class="copy-btn" onclick="copyText('admin')">Copiar</button>
+            </div>
+            
+            <div class="credential-item">
+                <span class="credential-label">Contraseña:</span>
+                <span class="credential-value" id="password">admin123</span>
+                <button class="copy-btn" onclick="copyText('admin123')">Copiar</button>
+            </div>
+        </div>
+        
+        <div class="warning">
+            <div class="warning-title">⚠️ Importante:</div>
+            <ul>
+                <li>Escribe las credenciales EXACTAMENTE como se muestran</li>
+                <li>Sin espacios antes o después</li>
+                <li>Todo en minúsculas</li>
+                <li>Usa los botones "Copiar" para evitar errores</li>
+            </ul>
+        </div>
+        
+        <div class="url-box">
+            <div style="margin-bottom: 10px; color: #666; font-weight: bold;">Acceder al Sistema:</div>
+            <div class="url">http://localhost:5001</div>
+        </div>
+        
+        <button class="btn" onclick="window.location.href='http://localhost:5001/auth/login'">
+            🚀 Ir al Sistema
+        </button>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+            <strong>📱 Una vez desplegado en la nube:</strong>
+            <div style="margin-top: 10px; color: #1976d2;">
+                https://libreria-joda.web.app
+            </div>
+            <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                Las mismas credenciales funcionarán en todos los dispositivos
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('✅ Copiado: ' + text);
+            }, function() {
+                alert('❌ Error al copiar');
+            });
+        }
+    </script>
+</body>
+</html>

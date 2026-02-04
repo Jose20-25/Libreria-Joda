@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Compras - LIBRERÍA JODA{% endblock %}
+{% block page_title %}Gestión de Compras{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Órdenes Pendientes</h3>
+        <div class="value">{{ purchases|selectattr('status', 'equalto', 'pending')|list|length }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Órdenes Recibidas</h3>
+        <div class="value">{{ purchases|selectattr('status', 'equalto', 'received')|list|length }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Total Compras</h3>
+        <div class="value">${{ "{:,.2f}".format(purchases|sum(attribute='total')) }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Proveedores</h3>
+        <div class="value">{{ purchases|map(attribute='supplier_name')|unique|list|length }}</div>
+    </div>
+</div>
+
+<!-- Purchases Table -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Órdenes de Compra</h2>
+        <button class="btn btn-primary" onclick="openModal('purchaseModal')">
+            <i class="fas fa-plus"></i> Nueva Orden
+        </button>
+    </div>
+    
+    <table id="purchasesTable">
+        <thead>
+            <tr>
+                <th>Orden #</th>
+                <th>Proveedor</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in purchases %}
+            <tr>
+                <td><strong>{{ purchase.order_number }}</strong></td>
+                <td>{{ purchase.supplier_name }}</td>
+                <td>{{ purchase.order_date.strftime('%Y-%m-%d') }}</td>
+                <td>${{ "{:,.2f}".format(purchase.total) }}</td>
+                <td>
+                    {% if purchase.status == 'pending' %}
+                        <span class="badge badge-warning">Pendiente</span>
+                    {% elif purchase.status == 'received' %}
+                        <span class="badge badge-success">Recibida</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if purchase.status == 'pending' %}
+                    <button class="btn btn-sm btn-success" onclick="receivePurchase('{{ purchase.id }}')">
+                        <i class="fas fa-check"></i> Recibir
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Nueva Compra -->
+<div id="purchaseModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h2 class="modal-title">Nueva Orden de Compra</h2>
+            <button class="close-modal" onclick="closeModal('purchaseModal')">&times;</button>
+        </div>
+        <form id="purchaseForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Proveedor</label>
+                    <input type="text" name="supplier_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" name="supplier_phone" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Fecha de Entrega</label>
+                <input type="date" name="delivery_date" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Productos</label>
+                <div id="purchaseItems">
+                    <div class="purchase-item" style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <select name="product_id[]" class="form-control" required>
+                            <option value="">Seleccionar producto</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.name }} ({{ product.code }})</option>
+                            {% endfor %}
+                        </select>
+                        <input type="number" name="quantity[]" class="form-control" placeholder="Cantidad" min="1" required>
+                        <input type="number" name="unit_cost[]" class="form-control" placeholder="Precio" step="0.01" min="0" required>
+                        <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm" onclick="addPurchaseItem()">
+                    <i class="fas fa-plus"></i> Agregar Producto
+                </button>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                <div id="purchaseTotal" style="font-size: 1.25rem; font-weight: bold;">Total: $0.00</div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Crear Orden
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function addPurchaseItem() {
+        const container = document.getElementById('purchaseItems');
+        const item = document.createElement('div');
+        item.className = 'purchase-item';
+        item.style.cssText = 'display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.5rem; margin-bottom: 0.5rem;';
+        item.innerHTML = `
+            <select name="product_id[]" class="form-control" required>
+                <option value="">Seleccionar producto</option>
+                {% for product in products %}
+                <option value="{{ product.id }}">{{ product.name }} ({{ product.code }})</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="quantity[]" class="form-control" placeholder="Cantidad" min="1" required>
+            <input type="number" name="unit_cost[]" class="form-control" placeholder="Precio" step="0.01" min="0" required>
+            <button type="button" class="btn btn-danger" onclick="this.parentElement.remove(); calculatePurchaseTotal()">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        container.appendChild(item);
+    }
+    
+    function calculatePurchaseTotal() {
+        const quantities = document.querySelectorAll('input[name="quantity[]"]');
+        const costs = document.querySelectorAll('input[name="unit_cost[]"]');
+        let total = 0;
+        
+        for (let i = 0; i < quantities.length; i++) {
+            const qty = parseFloat(quantities[i].value) || 0;
+            const cost = parseFloat(costs[i].value) || 0;
+            total += qty * cost;
+        }
+        
+        document.getElementById('purchaseTotal').textContent = `Total: $${total.toFixed(2)}`;
+    }
+    
+    document.addEventListener('input', (e) => {
+        if (e.target.name === 'quantity[]' || e.target.name === 'unit_cost[]') {
+            calculatePurchaseTotal();
+        }
+    });
+    
+    document.getElementById('purchaseForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        const productIds = formData.getAll('product_id[]');
+        const quantities = formData.getAll('quantity[]');
+        const costs = formData.getAll('unit_cost[]');
+        
+        const items = productIds.map((id, index) => ({
+            product_id: parseInt(id),
+            quantity: parseInt(quantities[index]),
+            unit_cost: parseFloat(costs[index])
+        }));
+        
+        const data = {
+            supplier_name: formData.get('supplier_name'),
+            supplier_phone: formData.get('supplier_phone'),
+            delivery_date: formData.get('delivery_date'),
+            notes: formData.get('notes'),
+            items: items
+        };
+        
+        const result = await apiRequest('/purchases/api/purchases', 'POST', data);
+        
+        if (result.success) {
+            showNotification('Orden de compra creada exitosamente', 'success');
+            closeModal('purchaseModal');
+            location.reload();
+        }
+    });
+    
+    async function receivePurchase(id) {
+        if (!confirmDelete('¿Confirmar recepción de esta orden? Se actualizará el inventario.')) return;
+        
+        const result = await apiRequest(`/purchases/api/purchases/${id}/receive`, 'POST');
+        
+        if (result.success) {
+            showNotification('Orden recibida e inventario actualizado', 'success');
+            location.reload();
+        }
+    }
+</script>
+{% endblock %}
