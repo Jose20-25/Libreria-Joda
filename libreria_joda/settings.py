@@ -20,8 +20,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary',
-    'cloudinary_storage',
     'tienda',
 ]
 
@@ -106,16 +104,14 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Cloudinary para imágenes en producción
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
-    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
-    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
-}
+# Firebase
+FIREBASE_STORAGE_BUCKET = config('FIREBASE_STORAGE_BUCKET', default='tiendajoda-c73c4.firebasestorage.app')
+FIREBASE_SERVICE_ACCOUNT_PATH = BASE_DIR / 'firebase-service-account.json'
 
-if config('CLOUDINARY_CLOUD_NAME', default=''):
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'
+# Almacenamiento de imágenes: Firebase en producción, local en desarrollo
+if config('FIREBASE_SERVICE_ACCOUNT_JSON', default='') or (BASE_DIR / 'firebase-service-account.json').exists():
+    DEFAULT_FILE_STORAGE = 'tienda.firebase_storage.FirebaseStorage'
+    MEDIA_URL = f'https://storage.googleapis.com/{FIREBASE_STORAGE_BUCKET}/media/'
 else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'

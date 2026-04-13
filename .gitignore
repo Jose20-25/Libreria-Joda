@@ -3,6 +3,9 @@ venv/
 env/
 .env
 
+# Firebase — NUNCA subir al repositorio
+firebase-service-account.json
+
 # Django
 *.pyc
 __pycache__/

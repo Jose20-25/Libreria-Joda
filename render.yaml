@@ -17,6 +17,10 @@ services:
         fromDatabase:
           name: libreria-joda-db
           property: connectionString
+      - key: FIREBASE_STORAGE_BUCKET
+        value: tiendajoda-c73c4.firebasestorage.app
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
       - key: PYTHON_VERSION
         value: 3.12
 
