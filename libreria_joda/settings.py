@@ -10,6 +10,12 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
+# Cloud Run agrega automáticamente el dominio .run.app
+CLOUDRUN_SERVICE_URL = config('CLOUDRUN_SERVICE_URL', default='')
+if CLOUDRUN_SERVICE_URL:
+    ALLOWED_HOSTS += [CLOUDRUN_SERVICE_URL.replace('https://', '').replace('http://', '')]
+    CSRF_TRUSTED_ORIGINS = [CLOUDRUN_SERVICE_URL]
+
 
 # Application definition
 
