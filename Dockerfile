@@ -24,13 +24,11 @@ COPY . .
 # Recopilar archivos estáticos
 RUN python manage.py collectstatic --no-input
 
-# Puerto que expone Cloud Run
+# Puerto — Railway inyecta $PORT automáticamente
 EXPOSE 8080
 
-# Comando de inicio con gunicorn
-CMD exec gunicorn libreria_joda.wsgi:application \
-    --bind 0.0.0.0:8080 \
-    --workers 2 \
-    --threads 4 \
-    --timeout 60 \
-    --log-file -
+# Script de inicio: migra y arranca
+RUN echo '#!/bin/sh\npython manage.py migrate --no-input\nexec gunicorn libreria_joda.wsgi:application --bind 0.0.0.0:${PORT:-8080} --workers 2 --threads 4 --timeout 60 --log-file -' > /app/start.sh \
+    && chmod +x /app/start.sh
+
+CMD ["/app/start.sh"]

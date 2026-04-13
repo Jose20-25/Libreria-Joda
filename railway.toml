@@ -1,0 +1,11 @@
+[build]
+builder = "DOCKERFILE"
+
+[deploy]
+startCommand = "gunicorn libreria_joda.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 60 --log-file -"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[[deploy.environmentVariables]]
+name = "DEBUG"
+value = "False"

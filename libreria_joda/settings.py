@@ -10,17 +10,13 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
-# PythonAnywhere
-PYTHONANYWHERE_HOST = config('PYTHONANYWHERE_HOST', default='')
-if PYTHONANYWHERE_HOST:
-    ALLOWED_HOSTS += [PYTHONANYWHERE_HOST]
-    CSRF_TRUSTED_ORIGINS = [f'https://{PYTHONANYWHERE_HOST}']
-
-# Cloud Run
-CLOUDRUN_SERVICE_URL = config('CLOUDRUN_SERVICE_URL', default='')
-if CLOUDRUN_SERVICE_URL:
-    ALLOWED_HOSTS += [CLOUDRUN_SERVICE_URL.replace('https://', '').replace('http://', '')]
-    CSRF_TRUSTED_ORIGINS = [CLOUDRUN_SERVICE_URL]
+# Railway / PythonAnywhere / Cloud Run — agrega cualquier dominio automáticamente
+EXTRA_HOST = config('RAILWAY_PUBLIC_DOMAIN', default='') or \
+             config('PYTHONANYWHERE_HOST', default='') or \
+             config('CLOUDRUN_SERVICE_URL', default='').replace('https://', '')
+if EXTRA_HOST:
+    ALLOWED_HOSTS += [EXTRA_HOST]
+    CSRF_TRUSTED_ORIGINS = [f'https://{EXTRA_HOST}']
 
 
 # Application definition
