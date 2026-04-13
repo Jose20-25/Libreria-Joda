@@ -1,0 +1,342 @@
+/* ===================================================
+   LIBRERÍA JODA — Estilos Profesionales
+   =================================================== */
+
+:root {
+  --primary: #1a5276;
+  --primary-light: #2e86c1;
+  --accent: #e67e22;
+  --accent-light: #f0a500;
+  --bg-light: #f4f6f9;
+  --text-dark: #1a1a2e;
+  --text-muted: #6c757d;
+  --border-radius: 12px;
+  --shadow: 0 2px 16px rgba(0,0,0,0.08);
+  --transition: all 0.25s ease;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-dark);
+  background: #fff;
+}
+
+/* ── BARRA SUPERIOR ─────────────────────────────── */
+.topbar {
+  background: var(--primary);
+  color: #fff;
+  font-size: .78rem;
+}
+
+/* ── HEADER / NAVBAR ────────────────────────────── */
+.header {
+  background: #fff;
+  border-bottom: 2px solid var(--primary);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.navbar-brand img { transition: var(--transition); }
+.navbar-brand:hover img { transform: scale(1.04); }
+
+.nav-link {
+  font-weight: 500;
+  color: var(--text-dark) !important;
+  padding: .4rem .8rem !important;
+  border-radius: 6px;
+  transition: var(--transition);
+}
+.nav-link:hover, .nav-link.active {
+  background: var(--primary);
+  color: #fff !important;
+}
+
+/* Buscador */
+.search-input {
+  border: 2px solid #e0e0e0;
+  border-right: none;
+  border-radius: 8px 0 0 8px !important;
+  font-size: .9rem;
+  transition: var(--transition);
+}
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: none;
+}
+
+.btn-buscar {
+  background: var(--primary);
+  color: #fff;
+  border: 2px solid var(--primary);
+  border-radius: 0 8px 8px 0 !important;
+}
+.btn-buscar:hover { background: var(--primary-light); border-color: var(--primary-light); }
+
+/* ── MAIN CONTENT ───────────────────────────────── */
+.main-content { min-height: 60vh; }
+
+/* ── HERO BANNER ────────────────────────────────── */
+.hero-banner {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff;
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: rgba(255,255,255,.05);
+  border-radius: 50%;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.hero-sub {
+  font-size: 1.1rem;
+  opacity: .9;
+  max-width: 480px;
+}
+.text-accent { color: var(--accent-light); }
+
+.hero-logo {
+  max-width: 280px;
+  filter: drop-shadow(0 8px 32px rgba(0,0,0,0.25));
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ── SECCIÓN TITLES ─────────────────────────────── */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+  position: relative;
+}
+.section-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-top: 6px;
+}
+
+/* ── TARJETAS DE CATEGORÍAS ─────────────────────── */
+.categoria-card { text-decoration: none; color: inherit; }
+.categoria-item {
+  transition: var(--transition);
+  border-radius: var(--border-radius) !important;
+  overflow: hidden;
+  cursor: pointer;
+}
+.categoria-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(26,82,118,.18) !important;
+}
+.categoria-img {
+  height: 110px;
+  object-fit: cover;
+}
+.categoria-icon-placeholder {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e8f4fd, #d0e8f5);
+  font-size: 2.5rem;
+  color: var(--primary);
+}
+
+/* ── TARJETAS DE PRODUCTOS ──────────────────────── */
+.producto-card {
+  border-radius: var(--border-radius) !important;
+  transition: var(--transition);
+  overflow: hidden;
+}
+.producto-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 28px rgba(0,0,0,.12) !important;
+}
+
+.producto-img-wrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-light);
+}
+.producto-img {
+  height: 200px;
+  width: 100%;
+  object-fit: contain;
+  padding: 12px;
+  transition: transform 0.35s ease;
+}
+.producto-card:hover .producto-img { transform: scale(1.06); }
+
+.producto-sin-imagen {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-light);
+  font-size: 3rem;
+  color: #ccc;
+}
+.producto-sin-imagen-lg { font-size: 5rem; }
+
+.producto-nombre {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Badges sobre imagen */
+.badge-oferta {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  z-index: 2;
+}
+.badge-destacado {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ffc107;
+  color: #fff;
+  font-size: .75rem;
+  padding: 4px 8px;
+  border-radius: 20px;
+  z-index: 2;
+}
+
+/* Precios */
+.precio-wrap { display: flex; align-items: center; gap: 6px; }
+.precio-normal { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+.precio-oferta { font-size: 1.1rem; font-weight: 700; color: #e74c3c; }
+.precio-original { font-size: .9rem; text-decoration: line-through; color: var(--text-muted); }
+
+/* Precio en detalle */
+.precio-detalle-normal { font-size: 2rem; font-weight: 700; color: var(--primary); }
+.precio-detalle-oferta { font-size: 2rem; font-weight: 700; color: #e74c3c; }
+.precio-detalle-original { font-size: 1.1rem; text-decoration: line-through; color: var(--text-muted); }
+
+/* ── SIDEBAR FILTROS ────────────────────────────── */
+.sidebar-filtros { border: 1px solid #e8ecef; }
+
+.categoria-link {
+  display: block;
+  padding: .45rem .8rem;
+  border-radius: 8px;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: .9rem;
+  transition: var(--transition);
+}
+.categoria-link:hover,
+.categoria-link.active {
+  background: var(--primary);
+  color: #fff !important;
+}
+
+/* ── BENEFICIOS ─────────────────────────────────── */
+.beneficio-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: #fff;
+  margin: 0 auto;
+  box-shadow: 0 4px 15px rgba(26,82,118,.3);
+}
+
+/* ── FOOTER ─────────────────────────────────────── */
+.footer {
+  background: var(--primary);
+  color: #fff;
+}
+.footer-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-size: .8rem;
+  color: var(--accent-light);
+  margin-bottom: 1rem;
+}
+.footer-links li , .footer-links a {
+  color: rgba(255,255,255,.7);
+  text-decoration: none;
+  font-size: .88rem;
+  margin-bottom: .4rem;
+  display: block;
+  transition: var(--transition);
+}
+.footer-links a:hover { color: #fff; padding-left: 6px; }
+.footer hr { border-color: rgba(255,255,255,.15); }
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.social-icon:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: scale(1.15);
+}
+
+/* ── BOTONES ────────────────────────────────────── */
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.btn-primary:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-light);
+}
+.btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.btn-outline-primary:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2rem; }
+  .hero-banner { padding: 50px 0; }
+}

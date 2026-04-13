@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Librería Joda — Inicio{% endblock %}
+
+{% block contenido %}
+
+<!-- HERO BANNER -->
+<section class="hero-banner">
+    <div class="container">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2">¡Bienvenido!</span>
+                <h1 class="hero-title">Tu librería de<br><span class="text-accent">confianza</span></h1>
+                <p class="hero-sub">Útiles escolares, papelería y artículos de oficina con la mejor calidad y precio.</p>
+                <div class="d-flex gap-3 flex-wrap mt-4">
+                    <a href="{% url 'tienda:productos' %}" class="btn btn-primary btn-lg px-4">
+                        <i class="bi bi-grid me-2"></i>Ver Productos
+                    </a>
+                    <a href="{% url 'tienda:productos' %}?categoria=utiles-escolares" class="btn btn-outline-light btn-lg px-4">
+                        Ver Ofertas
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-flex justify-content-center">
+                <img src="{% static 'img/logo.png' %}" alt="Librería Joda" class="hero-logo">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CATEGORÍAS -->
+{% if categorias %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-4">
+            <h2 class="section-title">Nuestras Categorías</h2>
+            <p class="text-muted">Encuentra todo lo que necesitas</p>
+        </div>
+        <div class="row g-3 justify-content-center">
+            {% for cat in categorias %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'tienda:productos' %}?categoria={{ cat.slug }}" class="categoria-card">
+                    <div class="card categoria-item text-center h-100 border-0 shadow-sm">
+                        {% if cat.imagen %}
+                        <img src="{{ cat.imagen.url }}" class="card-img-top categoria-img" alt="{{ cat.nombre }}">
+                        {% else %}
+                        <div class="categoria-icon-placeholder">
+                            <i class="bi bi-tag-fill"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body py-3">
+                            <h6 class="card-title mb-0 fw-semibold">{{ cat.nombre }}</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- PRODUCTOS DESTACADOS -->
+{% if productos_destacados %}
+<section class="py-5">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="section-title mb-1">Productos Destacados</h2>
+                <p class="text-muted mb-0">Lo más popular de nuestra tienda</p>
+            </div>
+            <a href="{% url 'tienda:productos' %}" class="btn btn-outline-primary">Ver todos</a>
+        </div>
+        <div class="row g-4">
+            {% for producto in productos_destacados %}
+            {% include 'tienda/partials/tarjeta_producto.html' %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- PRODUCTOS NUEVOS -->
+{% if productos_nuevos %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="section-title mb-1">Nuevos Productos</h2>
+                <p class="text-muted mb-0">Recién llegados a nuestra tienda</p>
+            </div>
+            <a href="{% url 'tienda:productos' %}" class="btn btn-outline-primary">Ver todos</a>
+        </div>
+        <div class="row g-4">
+            {% for producto in productos_nuevos %}
+            {% include 'tienda/partials/tarjeta_producto.html' %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- BENEFICIOS -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="beneficio-item">
+                    <div class="beneficio-icon"><i class="bi bi-truck"></i></div>
+                    <h6 class="mt-3 fw-semibold">Envío Rápido</h6>
+                    <small class="text-muted">En todo México</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="beneficio-item">
+                    <div class="beneficio-icon"><i class="bi bi-shield-check"></i></div>
+                    <h6 class="mt-3 fw-semibold">Compra Segura</h6>
+                    <small class="text-muted">Pagos protegidos</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="beneficio-item">
+                    <div class="beneficio-icon"><i class="bi bi-arrow-counterclockwise"></i></div>
+                    <h6 class="mt-3 fw-semibold">Devoluciones</h6>
+                    <small class="text-muted">Fácil proceso</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="beneficio-item">
+                    <div class="beneficio-icon"><i class="bi bi-headset"></i></div>
+                    <h6 class="mt-3 fw-semibold">Soporte 24/7</h6>
+                    <small class="text-muted">Siempre disponibles</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

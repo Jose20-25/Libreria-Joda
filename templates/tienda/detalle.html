@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}{{ producto.nombre }} — Librería Joda{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'tienda:inicio' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tienda:productos' %}">Productos</a></li>
+            {% if producto.categoria %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'tienda:productos' %}?categoria={{ producto.categoria.slug }}">
+                    {{ producto.categoria.nombre }}
+                </a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb-item active">{{ producto.nombre }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <!-- IMAGEN DEL PRODUCTO -->
+        <div class="col-lg-5">
+            <div class="producto-detalle-img-wrap shadow-sm rounded-3 overflow-hidden">
+                {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}"
+                     class="img-fluid w-100" style="max-height:450px;object-fit:contain;background:#f8f9fa;">
+                {% else %}
+                <div class="producto-sin-imagen-lg d-flex align-items-center justify-content-center bg-light rounded-3"
+                     style="height:400px;">
+                    <i class="bi bi-image display-1 text-muted opacity-30"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- INFO DEL PRODUCTO -->
+        <div class="col-lg-7">
+            {% if producto.categoria %}
+            <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-2">{{ producto.categoria.nombre }}</span>
+            {% endif %}
+
+            {% if producto.destacado %}
+            <span class="badge bg-warning text-dark mb-2 px-3 py-2 ms-1">
+                <i class="bi bi-star-fill me-1"></i>Destacado
+            </span>
+            {% endif %}
+
+            <h1 class="h2 fw-bold mt-2 mb-3">{{ producto.nombre }}</h1>
+
+            {% if producto.descripcion %}
+            <p class="text-muted mb-4">{{ producto.descripcion }}</p>
+            {% endif %}
+
+            <!-- PRECIO -->
+            <div class="precio-detalle mb-4 p-3 bg-light rounded-3">
+                {% if producto.tiene_oferta %}
+                <div class="d-flex align-items-center gap-3">
+                    <span class="precio-detalle-oferta">${{ producto.precio_final }}</span>
+                    <span class="precio-detalle-original">${{ producto.precio }}</span>
+                    <span class="badge bg-danger">
+                        -{% widthratio producto.precio_final producto.precio 100 as pct %}
+                        {% widthratio producto.precio_oferta producto.precio 100 as descuento %}
+                        {{ 100|add:"-descuento" }}% OFF
+                    </span>
+                </div>
+                {% else %}
+                <span class="precio-detalle-normal">${{ producto.precio }}</span>
+                {% endif %}
+            </div>
+
+            <!-- STOCK -->
+            <div class="mb-4">
+                {% if producto.stock > 0 %}
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-success-subtle text-success px-3 py-2">
+                        <i class="bi bi-check-circle-fill me-1"></i>En stock
+                    </span>
+                    <span class="text-muted small">{{ producto.stock }} disponible{{ producto.stock|pluralize:"s" }}</span>
+                </div>
+                {% else %}
+                <span class="badge bg-danger-subtle text-danger px-3 py-2">
+                    <i class="bi bi-x-circle-fill me-1"></i>Agotado temporalmente
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- BOTÓN CONTACTO WHATSAPP -->
+            <div class="d-flex flex-wrap gap-3">
+                <a href="https://wa.me/521234567890?text=Hola,%20me%20interesa%20el%20producto:%20{{ producto.nombre|urlencode }}"
+                   target="_blank" class="btn btn-success btn-lg px-4" rel="noopener">
+                    <i class="bi bi-whatsapp me-2"></i>Pedir por WhatsApp
+                </a>
+                <a href="{% url 'tienda:productos' %}" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="bi bi-arrow-left me-2"></i>Seguir comprando
+                </a>
+            </div>
+
+            <!-- DETALLES EXTRA -->
+            <div class="mt-4 border-top pt-4">
+                <div class="row g-3 text-center">
+                    <div class="col-4">
+                        <i class="bi bi-truck text-primary fs-4"></i>
+                        <div class="small mt-1 text-muted">Envío rápido</div>
+                    </div>
+                    <div class="col-4">
+                        <i class="bi bi-shield-check text-success fs-4"></i>
+                        <div class="small mt-1 text-muted">Compra segura</div>
+                    </div>
+                    <div class="col-4">
+                        <i class="bi bi-arrow-counterclockwise text-warning fs-4"></i>
+                        <div class="small mt-1 text-muted">Fácil devolución</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCTOS RELACIONADOS -->
+    {% if relacionados %}
+    <div class="mt-5 pt-4 border-top">
+        <h4 class="fw-bold mb-4">Productos Relacionados</h4>
+        <div class="row g-4">
+            {% for prod in relacionados %}
+            <div class="col-6 col-md-3">
+                <div class="card producto-card h-100 border-0 shadow-sm">
+                    <div class="producto-img-wrap">
+                        <a href="{% url 'tienda:detalle' prod.slug %}">
+                            {% if prod.imagen %}
+                            <img src="{{ prod.imagen.url }}" class="card-img-top producto-img" alt="{{ prod.nombre }}">
+                            {% else %}
+                            <div class="producto-sin-imagen"><i class="bi bi-image text-muted"></i></div>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="card-body p-3">
+                        <h6 class="card-title fw-semibold mb-1">
+                            <a href="{% url 'tienda:detalle' prod.slug %}" class="text-dark text-decoration-none">
+                                {{ prod.nombre }}
+                            </a>
+                        </h6>
+                        <div class="precio-wrap">
+                            {% if prod.tiene_oferta %}
+                            <span class="precio-oferta">${{ prod.precio_final }}</span>
+                            {% else %}
+                            <span class="precio-normal">${{ prod.precio }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

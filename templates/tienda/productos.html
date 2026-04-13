@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+    {% if categoria_activa %}{{ categoria_activa.nombre }} — {% endif %}
+    {% if busqueda %}Búsqueda: "{{ busqueda }}" — {% endif %}
+    Productos — Librería Joda
+{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'tienda:inicio' %}">Inicio</a></li>
+            <li class="breadcrumb-item active">
+                {% if categoria_activa %}{{ categoria_activa.nombre }}
+                {% elif busqueda %}Búsqueda: "{{ busqueda }}"
+                {% else %}Todos los Productos
+                {% endif %}
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- SIDEBAR FILTROS -->
+        <div class="col-lg-3">
+            <div class="sidebar-filtros p-4 rounded-3 shadow-sm bg-white sticky-top" style="top:80px;">
+                <h5 class="fw-bold mb-4"><i class="bi bi-funnel me-2"></i>Filtrar</h5>
+
+                <form method="GET" action="{% url 'tienda:productos' %}">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-uppercase text-muted">Buscar</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" name="q"
+                                   value="{{ busqueda }}" placeholder="Buscar...">
+                            <button class="btn btn-primary btn-sm" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-uppercase text-muted">Categorías</label>
+                        <div class="d-flex flex-column gap-1">
+                            <a href="{% url 'tienda:productos' %}{% if busqueda %}?q={{ busqueda }}{% endif %}"
+                               class="categoria-link {% if not categoria_activa %}active{% endif %}">
+                                <i class="bi bi-grid me-2"></i>Todas
+                            </a>
+                            {% for cat in categorias %}
+                            <a href="{% url 'tienda:productos' %}?categoria={{ cat.slug }}{% if busqueda %}&q={{ busqueda }}{% endif %}"
+                               class="categoria-link {% if categoria_activa.slug == cat.slug %}active{% endif %}">
+                                <i class="bi bi-tag me-2"></i>{{ cat.nombre }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- GRID DE PRODUCTOS -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="fw-bold mb-1">
+                        {% if categoria_activa %}{{ categoria_activa.nombre }}
+                        {% elif busqueda %}Resultados para "{{ busqueda }}"
+                        {% else %}Todos los Productos
+                        {% endif %}
+                    </h4>
+                    <small class="text-muted">{{ productos.count }} producto{{ productos.count|pluralize:"s" }} encontrado{{ productos.count|pluralize:"s" }}</small>
+                </div>
+            </div>
+
+            {% if productos %}
+            <div class="row g-4">
+                {% for producto in productos %}
+                {% include 'tienda/partials/tarjeta_producto.html' %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-search display-1 text-muted opacity-50"></i>
+                <h5 class="mt-3 text-muted">No se encontraron productos</h5>
+                <p class="text-muted">Intenta con otros filtros o busca algo diferente.</p>
+                <a href="{% url 'tienda:productos' %}" class="btn btn-primary mt-2">
+                    Ver todos los productos
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
