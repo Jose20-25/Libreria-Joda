@@ -69,3 +69,17 @@ class Producto(models.Model):
     def tiene_oferta(self):
         return self.precio_oferta is not None and self.precio_oferta < self.precio
 
+
+class Cliente(models.Model):
+    nombre = models.CharField(max_length=150, verbose_name='Nombre completo')
+    telefono = models.CharField(max_length=20, verbose_name='Teléfono')
+    registrado = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
+
+    class Meta:
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'
+        ordering = ['-registrado']
+
+    def __str__(self):
+        return f'{self.nombre} — {self.telefono}'
+

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}¡Registro exitoso! — Librería Joda{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5 text-center">
+            <div class="card border-0 shadow-sm rounded-4 p-5">
+                <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                         style="width:90px;height:90px;background:linear-gradient(135deg,#28a745,#20c997);">
+                        <i class="bi bi-check-lg text-white" style="font-size:3rem;"></i>
+                    </div>
+                    <h3 class="fw-bold text-success mb-2">¡Registro exitoso!</h3>
+                    <p class="text-muted">
+                        Gracias por registrarte en <strong>Librería Joda</strong>.<br>
+                        Pronto te contactaremos con ofertas y novedades.
+                    </p>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <a href="{% url 'tienda:productos' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-grid me-2"></i>Ver Productos
+                    </a>
+                    <a href="{% url 'tienda:inicio' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house me-2"></i>Ir al Inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

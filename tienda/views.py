@@ -1,5 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from .models import Producto, Categoria
+from .forms import ClienteRegistroForm
 
 
 def inicio(request):
@@ -47,4 +49,24 @@ def detalle_producto(request, slug):
         'relacionados': relacionados,
     }
     return render(request, 'tienda/detalle.html', context)
+
+
+def registro_cliente(request):
+    if request.method == 'POST':
+        form = ClienteRegistroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                f'¡Bienvenido, {form.cleaned_data["nombre"]}! '
+                'Te hemos registrado correctamente. Pronto nos pondremos en contacto contigo.'
+            )
+            return redirect('tienda:registro_exito')
+    else:
+        form = ClienteRegistroForm()
+    return render(request, 'tienda/registro.html', {'form': form})
+
+
+def registro_exito(request):
+    return render(request, 'tienda/registro_exito.html')
 

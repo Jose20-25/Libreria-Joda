@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Categoria, Producto
+from .models import Categoria, Producto, Cliente
 
 admin.site.site_header = 'Librería Joda — Panel Administrativo'
 admin.site.site_title = 'Librería Joda Admin'
@@ -62,4 +62,27 @@ class ProductoAdmin(admin.ModelAdmin):
             )
         return format_html('<span style="color:#aaa;">Sin imagen</span>')
     vista_previa_imagen.short_description = 'Vista previa'
+
+
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'telefono', 'registrado', 'contactar_whatsapp')
+    search_fields = ('nombre', 'telefono')
+    readonly_fields = ('registrado',)
+    ordering = ('-registrado',)
+    list_per_page = 25
+
+    def contactar_whatsapp(self, obj):
+        numero = ''.join(filter(str.isdigit, obj.telefono))
+        if numero:
+            url = f'https://wa.me/52{numero}?text=Hola%20{obj.nombre},%20te%20contactamos%20desde%20Librer%C3%ADa%20Joda.'
+            return format_html(
+                '<a href="{}" target="_blank" style="color:#25D366;font-weight:600;">'
+                '<img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/whatsapp.svg" '
+                'style="height:16px;margin-right:4px;filter:invert(49%) sepia(85%) saturate(400%) hue-rotate(100deg);">'
+                'WhatsApp</a>',
+                url
+            )
+        return '—'
+    contactar_whatsapp.short_description = 'Contactar'
 

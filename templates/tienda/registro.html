@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Regístrate — Librería Joda{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <!-- Cabecera -->
+                <div class="card-header text-white text-center py-4 border-0"
+                     style="background: linear-gradient(135deg, var(--primary), var(--primary-light));">
+                    <img src="{% static 'img/logo.png' %}" alt="Librería Joda" height="60" class="mb-2">
+                    <h4 class="mb-0 fw-bold">¡Regístrate!</h4>
+                    <p class="mb-0 opacity-75 small mt-1">Recibe ofertas y novedades exclusivas</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Nombre -->
+                        <div class="mb-4">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-person-fill me-1 text-primary"></i>{{ form.nombre.label }}
+                            </label>
+                            {{ form.nombre }}
+                            {% if form.nombre.errors %}
+                            <div class="invalid-feedback d-block">{{ form.nombre.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="mb-4">
+                            <label for="{{ form.telefono.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-telephone-fill me-1 text-success"></i>{{ form.telefono.label }}
+                            </label>
+                            {{ form.telefono }}
+                            {% if form.telefono.errors %}
+                            <div class="invalid-feedback d-block">{{ form.telefono.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="bi bi-whatsapp text-success"></i>
+                                También te podremos contactar por WhatsApp
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-semibold">
+                            <i class="bi bi-check-circle me-2"></i>Registrarme gratis
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light text-center py-3 border-0">
+                    <small class="text-muted">
+                        <i class="bi bi-shield-lock me-1"></i>
+                        Tus datos están seguros con nosotros
+                    </small>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
